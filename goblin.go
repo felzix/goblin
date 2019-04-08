@@ -341,6 +341,11 @@ func (g *G) Fail(error interface{}) {
 	//Skips 7 stacks due to the functions between the stack and the test
 	stack := ResolveStack(7)
 	message := fmt.Sprintf("%v", error)
+
+	if g.currentIt == nil {
+		panic("Must fail with an It block")
+	}
+
 	g.currentIt.failed(message, stack)
 	if g.shouldContinue != nil {
 		g.shouldContinue <- true
