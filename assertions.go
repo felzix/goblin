@@ -49,6 +49,13 @@ func (a *Assertion) Equal(dst interface{}) {
 	}
 }
 
+func (a *Assertion) NotEqual(dst interface{}) {
+	if objectsAreEqual(a.src, dst) {
+		a.fail(fmt.Sprintf("%#v %s %#v", a.src, "equals", dst))
+	}
+}
+
+
 // IsTrue asserts that a source is equal to true. Optional messages can be
 // provided for inclusion in the displayed message if the assertion fails. It
 // will fail the assertion if the source does not resolve to true.
