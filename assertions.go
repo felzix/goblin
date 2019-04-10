@@ -45,16 +45,29 @@ func (a *Assertion) Eql(dst interface{}) {
 // print a corresponding message if the objects are not equivalent.
 func (a *Assertion) Equal(dst interface{}) {
 	if !objectsAreEqual(a.src, dst) {
-		a.fail(fmt.Sprintf("%#v %s %#v", a.src, "does not equal", dst))
+		a.fail(fmt.Sprintf("%#v does not equal %#v", a.src, dst))
 	}
 }
 
 func (a *Assertion) NotEqual(dst interface{}) {
 	if objectsAreEqual(a.src, dst) {
-		a.fail(fmt.Sprintf("%#v %s %#v", a.src, "equals", dst))
+		a.fail(fmt.Sprintf("%#v equals %#v", a.src, dst))
 	}
 }
 
+func (a *Assertion) IsNil() {
+	if a.src != nil && fmt.Sprintf("%v", a.src) != "<nil>" {
+		message := fmt.Sprintf("%#v is not nil", a.src)
+		a.fail(message)
+	}
+}
+
+func (a *Assertion) IsNotNil() {
+	if a.src == nil && fmt.Sprintf("%v", a.src) == "<nil>" {
+		message := fmt.Sprintf("%#v is nil", a.src)
+		a.fail(message)
+	}
+}
 
 // IsTrue asserts that a source is equal to true. Optional messages can be
 // provided for inclusion in the displayed message if the assertion fails. It
