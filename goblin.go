@@ -314,6 +314,9 @@ func (g *G) Before(h func()) {
 }
 
 func (g *G) BeforeEach(h func()) {
+	if g.parent == nil {
+		panic("Must invoke BeforeEach within a Describe block")
+	}
 	g.parent.beforeEach = append(g.parent.beforeEach, h)
 }
 
@@ -326,6 +329,9 @@ func (g *G) After(h func()) {
 }
 
 func (g *G) AfterEach(h func()) {
+	if g.parent == nil {
+		panic("Must invoke AfterEach within a Describe block")
+	}
 	g.parent.afterEach = append(g.parent.afterEach, h)
 }
 
@@ -335,6 +341,18 @@ func (g *G) Assert(src interface{}) *Assertion {
 
 func timeTrack(start time.Time, g *G) {
 	g.reporter.ItTook(time.Since(start))
+}
+
+func (g *G) Poll(count, ms int, fn func() bool) {
+	for i := 0; i < count; i++ {
+		if fn() {
+			return
+		} else {
+			time.Sleep(time.Duration(ms) * time.Millisecond)
+		}
+	}
+
+	g.Fail("Polled function didn't return true; probably failed")
 }
 
 func (g *G) Fail(error interface{}) {
